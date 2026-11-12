@@ -1,7 +1,7 @@
 venv/
 tools/
 node_modules/
-dist/
+/dist/
 __pycache__/
 *.pyc
 *.pyo
@@ -10,7 +10,7 @@ __pycache__/
 *.db-wal
 .DS_Store
 backend/credora.db*
-frontend/dist/
+# frontend//dist/ is tracked for zero-config cloud deployment
 frontend/node_modules/
 backend/data/uploads/*
 !backend/data/uploads/.gitkeep
