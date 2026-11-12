@@ -164,6 +164,9 @@ export default function VendorIntakePortal({ onIntakeComplete, onBackToDashboard
                 <input
                   type="text"
                   required
+                  maxLength={21}
+                  minLength={21}
+                  placeholder="e.g. U72200MH2020PTC342119"
                   value={formData.cin}
                   onChange={(e) => setFormData({ ...formData, cin: e.target.value.toUpperCase() })}
                   className="w-full p-2.5 border border-slate-200 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
@@ -253,6 +256,8 @@ export default function VendorIntakePortal({ onIntakeComplete, onBackToDashboard
                   type="text"
                   required
                   maxLength={10}
+                  minLength={10}
+                  placeholder="e.g. AABCZ8912C"
                   value={formData.pan}
                   onChange={(e) => setFormData({ ...formData, pan: e.target.value.toUpperCase() })}
                   className="w-full p-2.5 border border-slate-200 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
@@ -267,6 +272,8 @@ export default function VendorIntakePortal({ onIntakeComplete, onBackToDashboard
                   type="text"
                   required
                   maxLength={15}
+                  minLength={15}
+                  placeholder="e.g. 27AABCZ8912C1Z4"
                   value={formData.gstin}
                   onChange={(e) => setFormData({ ...formData, gstin: e.target.value.toUpperCase() })}
                   className="w-full p-2.5 border border-slate-200 rounded-lg text-xs font-mono font-bold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
