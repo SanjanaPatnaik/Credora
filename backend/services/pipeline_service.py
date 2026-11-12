@@ -205,7 +205,7 @@ def execute_full_pipeline(vendor_id: str) -> dict:
     # ==============================================================
     # Stage 4: Cross-Document Verification
     # ==============================================================
-    cross_checks = run_cross_document_matching(vendor, nested_extracted, verification_map)
+    cross_checks = run_cross_document_matching(vendor, nested_extracted, verification_map, classification_results)
     
     # Store detected discrepancies in DB
     conn = get_db()
@@ -221,8 +221,8 @@ def execute_full_pipeline(vendor_id: str) -> dict:
             prev_status = existing_disc.get(f_name, "OPEN")
             
             disc_id = f"DISC-{uuid.uuid4().hex[:8].upper()}"
-            sub_val = str(chk.get("values", {}).get("form") or chk.get("values", {}).get("form_pan") or chk.get("values", {}).get("registered_company_name") or chk.get("values", {}).get("form_account") or "")
-            ver_val = str(chk.get("values", {}).get("mca_registry") or chk.get("values", {}).get("pan_card") or chk.get("values", {}).get("penny_drop_beneficiary") or chk.get("values", {}).get("cheque_account") or "")
+            sub_val = str(chk.get("values", {}).get("detected_document") or chk.get("values", {}).get("form") or chk.get("values", {}).get("form_pan") or chk.get("values", {}).get("registered_company_name") or chk.get("values", {}).get("form_account") or "")
+            ver_val = str(chk.get("values", {}).get("expected_document") or chk.get("values", {}).get("mca_registry") or chk.get("values", {}).get("pan_card") or chk.get("values", {}).get("penny_drop_beneficiary") or chk.get("values", {}).get("cheque_account") or "")
             
             # If not already present
             c.execute("SELECT discrepancy_id FROM discrepancies WHERE vendor_id = ? AND field_name = ?", (vendor_id, f_name))

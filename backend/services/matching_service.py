@@ -25,7 +25,8 @@ def normalize_address(addr: str) -> str:
 def run_cross_document_matching(
     form_data: dict,
     extracted_fields: Dict[str, Dict[str, Any]],
-    verification_results: Dict[str, Any]
+    verification_results: Dict[str, Any],
+    classification_results: List[Dict[str, Any]] = None
 ) -> List[Dict[str, Any]]:
     """
     Executes cross-document consistency checks comparing Form, Extracted Document Values, and External Registry Returns.
@@ -78,6 +79,42 @@ def run_cross_document_matching(
     mca_reg = verification_results.get("MCA_REGISTRY", {})
     mca_verified_name = mca_reg.get("company_name", "")
     mca_status = mca_reg.get("company_status", "")
+
+    # ==========================================
+    # Check 0A: Document Classification Mismatches (Wrong/Invalid Document Uploaded)
+    # ==========================================
+    doc_field_map = {
+        "PAN_CARD": "pan_card",
+        "GST_CERTIFICATE": "gst_certificate",
+        "CANCELLED_CHEQUE": "cancelled_cheque",
+        "INCORPORATION_CERTIFICATE": "incorporation_certificate"
+    }
+    if classification_results:
+        for cls in classification_results:
+            if cls.get("classification_status") == "MISMATCH":
+                exp_type = cls.get("expected_type", "DOCUMENT")
+                found_type = cls.get("classified_type", "UNKNOWN")
+                doc_label = exp_type.replace('_', ' ').title()
+                detected_label = found_type.replace('_', ' ').title()
+                field_key = doc_field_map.get(exp_type, exp_type.lower())
+                
+                checks.append({
+                    "check_id": f"CHK_CLASSIFICATION_{exp_type}",
+                    "field_name": field_key,
+                    "title": f"Document Type Mismatch: {doc_label}",
+                    "status": "DISCREPANCY",
+                    "severity": "CRITICAL",
+                    "match_score": 0.0,
+                    "values": {
+                        "form": f"Required: {doc_label}",
+                        "mca_registry": f"Detected: {detected_label}",
+                        "expected_document": doc_label,
+                        "detected_document": detected_label,
+                        "confidence": f"{int(cls.get('classification_confidence', 0) * 100)}%"
+                    },
+                    "explanation": cls.get("explanation") or f"Document type mismatch: Expected genuine {doc_label}, but detected {detected_label}.",
+                    "recommended_action": f"Request vendor to upload an authentic {doc_label} to satisfy statutory compliance."
+                })
 
     # ==========================================
     # Check 0: Mandatory Document Completeness

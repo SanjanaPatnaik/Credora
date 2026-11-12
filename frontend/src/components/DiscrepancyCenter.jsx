@@ -273,7 +273,15 @@ export default function DiscrepancyCenter({ vendor, discrepancies, followups, on
               let explanation = d.impact || 'Discrepancy detected across submitted evidence and official records.';
               let actionText = isEmailSent ? 'Follow-up email dispatched. Awaiting vendor correction.' : 'Action: Send follow-up email to request updated compliance evidence.';
 
-              if (fn.includes('bank') || fn.includes('cheque') || fn.includes('beneficiary')) {
+              if (d.impact?.includes('Document type mismatch') || fn.includes('classification')) {
+                title = 'Document Type Misclassification';
+                submittedLabel = 'Uploaded Document Content';
+                submittedSub = 'OCR Content Classification';
+                verifiedLabel = 'Required Statutory Document';
+                verifiedSub = 'Misclassified / Invalid File ⚠️';
+                explanation = d.impact || 'Uploaded file does not match the required statutory document type for this verification stage.';
+                actionText = isEmailSent ? 'Follow-up email dispatched. Awaiting genuine document upload.' : 'Action: Request authentic statutory document from vendor.';
+              } else if (fn.includes('bank') || fn.includes('cheque') || fn.includes('beneficiary')) {
                 title = 'Bank Ownership / Beneficiary Mismatch';
                 submittedLabel = 'Submitted Bank Beneficiary';
                 submittedSub = 'Expected Corporate Legal Entity';
