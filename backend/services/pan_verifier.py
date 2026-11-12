@@ -45,28 +45,45 @@ def verify_pan(pan: str, company_name: str = "") -> Dict[str, Any]:
     # Check if Setu API credentials are provided
     setu_client_id = os.getenv("SETU_CLIENT_ID")
     setu_secret = os.getenv("SETU_CLIENT_SECRET")
+    setu_product_instance_id = os.getenv("SETU_PRODUCT_INSTANCE_ID", "")
     
     if setu_client_id and setu_secret:
         try:
-            # Live Setu sandbox endpoint
+            # Setu Data Gateway PAN endpoint
+            headers = {
+                "x-client-id": setu_client_id,
+                "x-client-secret": setu_secret,
+                "content-type": "application/json"
+            }
+            if setu_product_instance_id:
+                headers["x-product-instance-id"] = setu_product_instance_id
+
+            # Setu official payload requires user consent and reason (DPDP Act compliance)
+            payload = {
+                "pan": pan,
+                "consent": "Y",
+                "reason": "Vendor corporate onboarding compliance and identity verification"
+            }
+            
             resp = httpx.post(
-                "https://dg-sandbox.setu.co/api/verify/pan",
-                headers={
-                    "x-client-id": setu_client_id,
-                    "x-client-secret": setu_secret,
-                    "content-type": "application/json"
-                },
-                json={"pan": pan},
+                "https://dg-sandbox.setu.co/pan",
+                headers=headers,
+                json=payload,
                 timeout=10.0
             )
             data = resp.json()
+            is_verified = (
+                data.get("verification") == "SUCCESS" or 
+                data.get("status") in ["VALID", "ACTIVE", "OPERATIVE"] or 
+                data.get("data", {}).get("status") in ["VALID", "ACTIVE", "OPERATIVE"]
+            )
             return {
-                "verification_status": "VERIFIED" if data.get("verification") == "SUCCESS" else "FAILED",
-                "is_valid": data.get("verification") == "SUCCESS",
+                "verification_status": "VERIFIED" if is_verified else "FAILED",
+                "is_valid": is_verified,
                 "is_simulated": False,
                 "source_provider": "Setu PAN Verification API (Sandbox)",
                 "pan": pan,
-                "holder_name": data.get("data", {}).get("full_name") or company_name,
+                "holder_name": data.get("data", {}).get("full_name") or data.get("data", {}).get("name") or company_name,
                 "category": data.get("data", {}).get("category", "Company"),
                 "response_details": data
             }
