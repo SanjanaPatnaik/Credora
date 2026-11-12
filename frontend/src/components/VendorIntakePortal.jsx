@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   FileUp, Sparkles, Building2, CreditCard, FileCheck, 
-  UploadCloud, CheckCircle2, AlertCircle, ArrowRight, Loader2
+  UploadCloud, CheckCircle2, AlertCircle, ArrowRight, Loader2, UserCheck
 } from 'lucide-react';
 import { submitVendorIntake } from '../api';
 
@@ -185,11 +185,63 @@ export default function VendorIntakePortal({ onIntakeComplete, onBackToDashboard
             </div>
           </div>
 
-          {/* Section B: Tax & Compliance Identifiers */}
+          {/* Section B: Authorized Signatory & Contact Details */}
+          <div className="space-y-3 pt-2">
+            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center border-b border-slate-100 pb-2">
+              <UserCheck className="w-4 h-4 text-emerald-600 mr-1.5" />
+              B. Authorized Signatory & Primary Contact
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Authorized Signatory / Contact Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Vikram Malhotra"
+                  value={formData.contact_person}
+                  onChange={(e) => setFormData({ ...formData, contact_person: e.target.value })}
+                  className="w-full p-2.5 border border-slate-200 rounded-lg text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Official Business Email *
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="procurement@company.com"
+                  value={formData.contact_email}
+                  onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                  className="w-full p-2.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                  Contact Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  required
+                  placeholder="+91 98450 12345"
+                  value={formData.contact_phone}
+                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                  className="w-full p-2.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Section C: Tax & Compliance Identifiers */}
           <div className="space-y-3 pt-2">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center border-b border-slate-100 pb-2">
               <FileCheck className="w-4 h-4 text-emerald-600 mr-1.5" />
-              B. Tax & Compliance Identifiers
+              C. Tax & Compliance Identifiers
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -223,11 +275,11 @@ export default function VendorIntakePortal({ onIntakeComplete, onBackToDashboard
             </div>
           </div>
 
-          {/* Section C: Bank Details */}
+          {/* Section D: Bank Details */}
           <div className="space-y-3 pt-2">
             <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center border-b border-slate-100 pb-2">
               <CreditCard className="w-4 h-4 text-emerald-600 mr-1.5" />
-              C. Corporate Bank Account Details
+              D. Corporate Bank Account Details
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -272,12 +324,12 @@ export default function VendorIntakePortal({ onIntakeComplete, onBackToDashboard
             </div>
           </div>
 
-          {/* Section D: Document Uploads */}
+          {/* Section E: Document Uploads */}
           <div className="space-y-3 pt-2">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-2 gap-2">
               <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center">
                 <FileUp className="w-4 h-4 text-emerald-600 mr-1.5" />
-                D. Mandatory Compliance Documents
+                E. Mandatory Compliance Documents
               </h3>
               <span className="text-xs text-rose-600 font-medium self-start sm:self-auto">
                 * All 4 uploads required before submission
