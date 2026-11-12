@@ -1,0 +1,17 @@
+venv/
+tools/
+node_modules/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.db-journal
+*.db-wal
+.DS_Store
+backend/credora.db*
+frontend/dist/
+frontend/node_modules/
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+
